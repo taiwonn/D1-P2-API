@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "D1-P2-API/1.0.0": {
+        "runtime": {
+          "D1-P2-API.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "D1-P2-API/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

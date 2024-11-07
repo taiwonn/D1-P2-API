@@ -1,0 +1,15 @@
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/D1-P2-API
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/D1-P2-API.deps.json
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/D1-P2-API.runtimeconfig.json
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/D1-P2-API.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/D1-P2-API.pdb
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.GeneratedMSBuildEditorConfig.editorconfig
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.AssemblyInfoInputs.cache
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.AssemblyInfo.cs
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.csproj.CoreCompileInputs.cache
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.sourcelink.json
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.dll
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/refint/D1-P2-API.dll
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.pdb
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.genruntimeconfig.cache
+/Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/ref/D1-P2-API.dll
