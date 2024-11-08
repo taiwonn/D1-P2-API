@@ -28,3 +28,8 @@
 /Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Swashbuckle.AspNetCore.SwaggerUI.dll
 /Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.csproj.AssemblyReference.cache
 /Users/thom/Documents/GitHub/D1-P2-API/obj/Debug/net8.0/D1-P2-API.csproj.Up2Date
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/DotNetEnv.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.EntityFrameworkCore.Relational.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Npgsql.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Sprache.dll
