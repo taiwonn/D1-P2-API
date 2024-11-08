@@ -18,8 +18,8 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<TeamMember>>> GetTeamMembers()
         {
             var teamMembers = await _context.TeamMembers
-                .Include(tm => tm.UserId)
-                .Include(tm => tm.TeamId)
+                .Include(tm => tm.User)  // Changed from UserId to User
+                .Include(tm => tm.Team)  // Changed from TeamId to Team
                 .ToListAsync();
 
             Console.ForegroundColor = ConsoleColor.Green;
@@ -32,9 +32,9 @@ namespace Api.Controllers
         public async Task<ActionResult<TeamMember>> GetTeamMember(int id)
         {
             var member = await _context.TeamMembers
-                .Include(tm => tm.UserId)
-                .Include(tm => tm.TeamId)
-                .FirstOrDefaultAsync(m => m.MemberId == id);
+                .Include(tm => tm.User)  // Changed from UserId to User
+                .Include(tm => tm.Team)  // Changed from TeamId to Team
+                .FirstOrDefaultAsync(tm => tm.MemberId == id);
 
             if (member == null) return NotFound();
 
@@ -42,7 +42,7 @@ namespace Api.Controllers
             Console.WriteLine("🔍 Team member retrieved successfully");
             Console.ResetColor();
             return Ok(member);
-        }
+        } 
 
         [HttpPost]
         public async Task<ActionResult<TeamMember>> CreateTeamMember(TeamMember member)

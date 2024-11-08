@@ -17,15 +17,9 @@ public static class DatabaseInitializer
             var user2 = new User { Username = "janesmith", FirstName = "Jane", LastName = "Smith", Password = "password456", Score = 20, CreatedAt = DateTime.Now };
             context.Users.AddRange(user1, user2);
 
-            context.Teams.AddRange(
-                new Team { TeamName = "Team Alpha", TotalScore = 100, CreatedAt = DateTime.Now, User = new List<User> { user1 } },
-                new Team { TeamName = "Team Beta", TotalScore = 200, CreatedAt = DateTime.Now, User = new List<User> { user2 } }
-            );
-
-            context.TeamMembers.AddRange(
-                new TeamMember { TeamId = 1, UserId = 1 },
-                new TeamMember { TeamId = 2, UserId = 2 }
-            );
+            var team1 = new Team { TeamName = "Team Alpha", TotalScore = 100, CreatedAt = DateTime.Now, User = new List<User> { user1 } };
+            var team2 = new Team { TeamName = "Team Beta", TotalScore = 200, CreatedAt = DateTime.Now, User = new List<User> { user2 } };
+            context.Teams.AddRange(team1, team2);
 
 
             // CHALLENGE & DEFI
@@ -46,17 +40,13 @@ public static class DatabaseInitializer
             //CHALLENGE PARTICIPATION
             var challengeParticipation1 = new ChallengeParticipation
             {
-                ChallengeId = 1,
-                UserId = 1,
                 ParticipationDate = DateTime.Now,
                 Score = 10,
                 Challenge = challenge1,
-                User = user1
+                User = user1,
             };
             var challengeParticipation2 = new ChallengeParticipation
             {
-                ChallengeId = 2,
-                UserId = 2,
                 ParticipationDate = DateTime.Now,
                 Score = 20,
                 Challenge = challenge2,
@@ -64,7 +54,9 @@ public static class DatabaseInitializer
             };
             context.Participations.AddRange(challengeParticipation1, challengeParticipation2);
 
-
+            var teamMember1 = new TeamMember { Team = team1, User = user1 };
+            var teamMember2 = new TeamMember { Team = team2, User = user2 };
+            context.TeamMembers.AddRange(teamMember1, teamMember2);
 
 
             context.SaveChanges();

@@ -17,13 +17,13 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ChallengeParticipation>>> GetParticipations()
         {
-            return Ok(await _context.Participations.Include(p => p.Challenge).ToListAsync());
+            return Ok(await _context.Participations.Include(p => p.User).Include(p => p.Challenge).ToListAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ChallengeParticipation>> GetParticipation(int id)
         {
-            var participation = await _context.Participations.Include(p => p.Challenge).FirstOrDefaultAsync(p => p.ParticipationId == id);
+            var participation = await _context.Participations.Include(p => p.User).Include(p => p.Challenge).FirstOrDefaultAsync(p => p.ParticipationId == id);
             if (participation == null) return NotFound();
             return Ok(participation);
         }

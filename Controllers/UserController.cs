@@ -42,7 +42,7 @@ namespace Api.Controllers
 
 
                 var participations = await _context.Participations
-                    .Where(p => p.UserId == user.Id)
+                    .Where(p => p.User.Id == user.Id)
                     .Include(p => p.Challenge)
                         .ThenInclude(c => c.Defis)
                     .Select(p => new
@@ -112,7 +112,7 @@ namespace Api.Controllers
                 .ToListAsync();
 
             var participations = await _context.Participations
-                .Where(p => p.UserId == user.Id)
+                .Where(p => p.User.Id == user.Id)
                 .Include(p => p.Challenge)
                     .ThenInclude(c => c.Defis)
                 .Select(p => new
@@ -173,7 +173,7 @@ namespace Api.Controllers
             }
 
             var userParticipations = await _context.Participations
-                .Where(p => p.UserId == id)
+                .Where(p => p.User.Id == id)
                 .Include(p => p.Challenge)
                 .Select(p => new
                 {
