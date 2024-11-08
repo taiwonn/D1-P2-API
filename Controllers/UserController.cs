@@ -1,90 +1,258 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace UserController.Controllers
+namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        // Cette liste simule une base de données en mémoire
-        private static List<User> Users = new List<User>
-        {
-            new User { Id = 1, FirstName = "John", LastName = "Doe", Username = "johndoe", Password = "password123" },
-            new User { Id = 2, FirstName = "Jane", LastName = "Smith", Username = "janesmith", Password = "password456" }
-        };
+        private readonly ApplicationDbContext _context;
 
-        // GET: api/user
-        [HttpGet]
-        public ActionResult<IEnumerable<User>> GetUsers()
+        public UserController(ApplicationDbContext context)
         {
+            _context = context;
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("🔍 Users retrieved successfully");
+            Console.WriteLine("UserController initialized");
             Console.ResetColor();
-            return Ok(Users);
         }
 
-        // GET: api/user/{id}
-        [HttpGet("{id}")]
-        public ActionResult<User> GetUser(int id)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<object>>> GetUsers()
         {
-            var user = Users.Find(u => u.Id == id);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("GetUsers endpoint called");
+            var users = await _context.Users.ToListAsync();
+            Console.WriteLine($"Found {users.Count} users");
+            Console.ResetColor();
+            
+            var userDetails = await Task.WhenAll(users.Select(async user =>
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Processing user {user.Id}");
+                Console.ResetColor();
+                
+                var teamMemberships = await _context.TeamMembers
+                      .Where(tm => tm.UserId == user.Id)
+                      .Join(_context.Teams,
+                          tm => tm.TeamId,
+                          t => t.TeamId,
+                          (tm, t) => t)
+                    .ToListAsync();
+
+
+                var participations = await _context.Participations
+                    .Where(p => p.User.Id == user.Id)
+                    .Include(p => p.Challenge)
+                        .ThenInclude(c => c.Defis)
+                    .Select(p => new
+                    {
+                        Challenge = new
+                        {
+                            p.Challenge.ChallengeId,
+                            p.Challenge.Title,
+                            p.Challenge.Description,
+                            p.Challenge.TotalPoints,
+                            p.Challenge.Status,
+                            Defis = p.Challenge.Defis.Select(d => new
+                            {
+                                d.DefiId,
+                                d.Title,
+                                d.Description,
+                                d.Points,
+                                d.CreatedAt
+                            })
+                        },
+                        p.ParticipationDate,
+                        p.Score
+                    })
+                    .ToListAsync();
+
+                return new
+                {
+                    User = new
+                    {
+                        user.Id,
+                        user.Username,
+                        user.FirstName,
+                        user.LastName,
+                        user.Score,
+                        user.CreatedAt
+                    },
+                    Teams = teamMemberships,
+                    Participations = participations
+                };
+            }));
+
+            return Ok(userDetails);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUser(int id)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"GetUser endpoint called for id: {id}");
+            Console.ResetColor();
+
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"User with id {id} not found");
+                Console.ResetColor();
                 return NotFound();
             }
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("🔍 User retrieved successfully");
-            Console.ResetColor();
-            return Ok(user);
+
+            var teamMemberships = await _context.TeamMembers
+                .Where(tm => tm.UserId == user.Id)
+                .Join(_context.Teams,
+                    tm => tm.TeamId,
+                    t => t.TeamId,
+                    (tm, t) => t)
+                .ToListAsync();
+
+            var participations = await _context.Participations
+                .Where(p => p.User.Id == user.Id)
+                .Include(p => p.Challenge)
+                    .ThenInclude(c => c.Defis)
+                .Select(p => new
+                {
+                    Challenge = new
+                    {
+                        p.Challenge.ChallengeId,
+                        p.Challenge.Title,
+                        p.Challenge.Description,
+                        p.Challenge.TotalPoints,
+                        p.Challenge.Status,
+                        Defis = p.Challenge.Defis.Select(d => new
+                        {
+                            d.DefiId,
+                            d.Title,
+                            d.Description,
+                            d.Points,
+                            d.CreatedAt
+                        })
+                    },
+                    p.ParticipationDate,
+                    p.Score
+                })
+                .ToListAsync();
+
+            var userDetails = new
+            {
+                User = new
+                {
+                    user.Id,
+                    user.Username,
+                    user.FirstName,
+                    user.LastName,
+                    user.Score,
+                    user.CreatedAt
+                },
+                Teams = teamMemberships,
+                Participations = participations
+            };
+
+            return Ok(userDetails);
         }
 
-        // POST: api/user
-        [HttpPost]
-        public ActionResult<User> CreateUser(User user)
+        [HttpGet("{id}/challenges")]
+        public async Task<ActionResult> GetUserWithChallenges(int id)
         {
-            user.Id = Users.Count + 1;
-            Users.Add(user);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("👤 User created successfully");
+            Console.WriteLine($"GetUserWithChallenges endpoint called for id: {id}");
             Console.ResetColor();
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"User with id {id} not found");
+                Console.ResetColor();
+                return NotFound();
+            }
+
+            var userParticipations = await _context.Participations
+                .Where(p => p.User.Id == id)
+                .Include(p => p.Challenge)
+                .Select(p => new
+                {
+                    p.Challenge,
+                    p.ParticipationDate,
+                    p.Score
+                }).ToListAsync();
+
+            var userWithChallenges = new
+            {
+                User = user,
+                Challenges = userParticipations
+            };
+
+            return Ok(userWithChallenges);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateUser(User user)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Creating new user: {user.Username}");
+            Console.ResetColor();
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
-        // PUT: api/user/{id}
         [HttpPut("{id}")]
-        public ActionResult UpdateUser(int id, User updatedUser)
+        public async Task<IActionResult> UpdateUser(int id, User updatedUser)
         {
-            var user = Users.Find(u => u.Id == id);
-            if (user == null)
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Updating user with id: {id}");
+            Console.ResetColor();
+
+            if (id != updatedUser.Id) return BadRequest();
+            _context.Entry(updatedUser).State = EntityState.Modified;
+
+            try
             {
-                return NotFound();
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"User with id {id} not found during update");
+                    Console.ResetColor();
+                    return NotFound();
+                }
+                throw;
             }
 
-            user.FirstName = updatedUser.FirstName;
-            user.LastName = updatedUser.LastName;
-            user.Username = updatedUser.Username;
-            user.Password = updatedUser.Password;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("👤 User updated successfully");
-            Console.ResetColor();
             return NoContent();
         }
 
-        // DELETE: api/user/{id}
         [HttpDelete("{id}")]
-        public ActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = Users.Find(u => u.Id == id);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Deleting user with id: {id}");
+            Console.ResetColor();
+
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"User with id {id} not found for deletion");
+                Console.ResetColor();
                 return NotFound();
             }
 
-            Users.Remove(user);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("👤 User deleted successfully");
-            Console.ResetColor();
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        private bool UserExists(int id) => _context.Users.Any(e => e.Id == id);
     }
 }
