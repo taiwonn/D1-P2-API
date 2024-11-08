@@ -17,6 +17,11 @@ Console.WriteLine(@"
 └── 🏗️  Builder created");
 Console.ResetColor();
 
+<<<<<<< Updated upstream
+=======
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); 
+>>>>>>> Stashed changes
 builder.Services.AddControllers();
 Console.ForegroundColor = ConsoleColor.Yellow;
 Console.WriteLine("    └── 🎮 Controllers added");
