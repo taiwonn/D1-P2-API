@@ -7,4 +7,5 @@ public class Defi
     public int? Points { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime LastUpdated { get; set; } = DateTime.Now;
+    
 }

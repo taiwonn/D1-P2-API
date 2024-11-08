@@ -7,4 +7,7 @@ public class Challenge
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public bool Status { get; set; }
     public DateTime LastUpdated { get; set; } = DateTime.Now;
+
+    public required List<Defi> Defis { get; set; }
+    
 }

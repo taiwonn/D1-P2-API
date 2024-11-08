@@ -5,4 +5,5 @@ public class Team
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public int? CoachId { get; set; }
     public int TotalScore { get; set; }
+    public required ICollection<User> User { get; set; }
 }

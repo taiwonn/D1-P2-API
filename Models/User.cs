@@ -7,5 +7,6 @@ public class User
     public required string Password { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public int Score { get; set; }
-
+    
+    
 }
