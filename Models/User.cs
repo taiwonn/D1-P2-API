@@ -5,4 +5,7 @@ public class User
     public required string LastName { get; set; }
     public required string Username { get; set; }
     public required string Password { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public int Score { get; set; }
+
 }
