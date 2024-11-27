@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
 
 Console.Clear();
 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -20,9 +18,9 @@ Console.WriteLine(@"
 └── 🏗️  Builder created");
 Console.ResetColor();
 
+// Add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); 
-
+    options.UseInMemoryDatabase("InMemoryDb")); // Use an in-memory database for this example
 builder.Services.AddControllers();
 
 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -58,21 +56,13 @@ Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("    └── 🎯 Endpoints mapped");
 Console.ResetColor();
 
-// Test database connection
+// Seed data during application startup
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    try
-    {
-        dbContext.Database.CanConnect(); // Vérifie la connexion à la base de données
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("    └── ✅ Database connection successful");
-    }
-    catch (Exception ex)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("    └── ❌ Database connection failed: " + ex.Message);
-    }
+    var services = scope.ServiceProvider;
+    DatabaseInitializer.Seed(services);
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine("    └── 🌱 Database seeded with initial data");
     Console.ResetColor();
 }
 
