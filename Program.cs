@@ -22,7 +22,7 @@ Console.ResetColor();
 
 // Add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb")); // Use an in-memory database for this example
+    options.UseInMemoryDatabase("InMemoryDb"));
 builder.Services.AddControllers();
 
 Console.ForegroundColor = ConsoleColor.Yellow;
