@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 Console.Clear();
 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -12,6 +13,7 @@ Console.WriteLine(@"
 Console.ResetColor();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine(@"
 📦 Services Configuration:
@@ -50,6 +52,9 @@ app.UseRouting();
 Console.ForegroundColor = ConsoleColor.Yellow;
 Console.WriteLine("    └── 🛣️  Routes configured");
 Console.ResetColor();
+
+// Add API Key Middleware
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapControllers();
 Console.ForegroundColor = ConsoleColor.Green;
