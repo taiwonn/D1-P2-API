@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using System.Security.Cryptography;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -21,11 +22,25 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginModel model)
     {
-        // Validate user credentials
-        var user = _context.Users.FirstOrDefault(u => u.Email == model.Email && u.Password == model.Password);
+        // Add rate limiting
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+        if (string.IsNullOrEmpty(ipAddress))
+        {
+            return BadRequest("Invalid request");
+        }
+
+        var user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
         if (user == null)
         {
-            return Unauthorized("Invalid email or password.");
+            Thread.Sleep(Random.Shared.Next(300, 700)); 
+            return Unauthorized(new { message = "Authentication failed" });
+        }
+
+        // TODO: Implement proper password hashing with salt
+        if (user.Password != model.Password)
+        {
+            Thread.Sleep(Random.Shared.Next(300, 700));
+            return Unauthorized(new { message = "Authentication failed" });
         }
 
         var token = GenerateJwtToken(user);
@@ -35,24 +50,30 @@ public class AuthController : ControllerBase
     private string GenerateJwtToken(User user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-            // Add more claims if needed
+            new Claim("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
         };
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.Now.AddMinutes(30),
-            signingCredentials: creds);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddMinutes(15),
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"],
+            SigningCredentials = creds,
+            NotBefore = DateTime.UtcNow
+        };
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        
+        return tokenHandler.WriteToken(token);
     }
 }
 
