@@ -3,6 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 Console.Clear();
 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -24,6 +27,26 @@ Console.ResetColor();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseInMemoryDatabase("InMemoryDb"));
 builder.Services.AddControllers();
+
+// Add JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    var jwtSettings = builder.Configuration.GetSection("Jwt");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+    };
+});
 
 Console.ForegroundColor = ConsoleColor.Yellow;
 Console.WriteLine("    └── 🎮 Controllers added");
@@ -53,8 +76,8 @@ Console.ForegroundColor = ConsoleColor.Yellow;
 Console.WriteLine("    └── 🛣️  Routes configured");
 Console.ResetColor();
 
-// Add API Key Middleware
-app.UseMiddleware<ApiKeyMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 Console.ForegroundColor = ConsoleColor.Green;

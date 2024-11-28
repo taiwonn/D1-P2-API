@@ -69,3 +69,11 @@
 /Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/System.Text.Encodings.Web.dll
 /Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/System.Text.Json.dll
 /Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/runtimes/browser/lib/net8.0/System.Text.Encodings.Web.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.IdentityModel.Logging.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/Microsoft.IdentityModel.Tokens.dll
+/Users/thom/Documents/GitHub/D1-P2-API/bin/Debug/net8.0/System.IdentityModel.Tokens.Jwt.dll

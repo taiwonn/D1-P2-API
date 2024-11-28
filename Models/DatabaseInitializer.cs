@@ -13,8 +13,8 @@ public static class DatabaseInitializer
 
 
             // USERS & TEAMS
-            var user1 = new User { Username = "johndoe", FirstName = "John", LastName = "Doe", Password = "password123", Score = 10, CreatedAt = DateTime.Now };
-            var user2 = new User { Username = "janesmith", FirstName = "Jane", LastName = "Smith", Password = "password456", Score = 20, CreatedAt = DateTime.Now };
+            var user1 = new User { Username = "johndoe", FirstName = "John", LastName = "Doe", Email = "john.doe@example.com", Password = "password123", Score = 10, CreatedAt = DateTime.Now };
+            var user2 = new User { Username = "janesmith", FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com", Password = "password456", Score = 20, CreatedAt = DateTime.Now };
             context.Users.AddRange(user1, user2);
 
             var team1 = new Team { TeamName = "Team Alpha", TotalScore = 100, CreatedAt = DateTime.Now, User = new List<User> { user1 } };

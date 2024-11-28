@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
 namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -76,6 +77,7 @@ namespace Api.Controllers
                         user.Username,
                         user.FirstName,
                         user.LastName,
+                        user.Email,
                         user.Score,
                         user.CreatedAt
                     },
@@ -146,6 +148,7 @@ namespace Api.Controllers
                     user.Username,
                     user.FirstName,
                     user.LastName,
+                    user.Email,
                     user.Score,
                     user.CreatedAt
                 },

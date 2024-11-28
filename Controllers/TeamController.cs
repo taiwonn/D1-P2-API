@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-
+using Microsoft.AspNetCore.Authorization;
 namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class TeamController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
