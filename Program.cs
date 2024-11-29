@@ -25,7 +25,7 @@ Console.ResetColor();
 
 // Add services to the container
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseInMemoryDatabase("InMemoryDb"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
 
 // Add JWT Authentication
@@ -58,6 +58,27 @@ Console.WriteLine("\n🔧 Application Configuration:");
 Console.WriteLine("└── 🏭 Application built");
 Console.ResetColor();
 
+// Test database connection
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        context.Database.OpenConnection();
+        context.Database.CloseConnection();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("    └── 🔌 Database connection successful");
+        Console.ResetColor();
+    }
+}
+catch (Exception ex)
+{
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine($"    └── ❌ Database connection failed: {ex.Message}");
+    Console.ResetColor();
+    return;
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -83,16 +104,6 @@ app.MapControllers();
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine("    └── 🎯 Endpoints mapped");
 Console.ResetColor();
-
-// Seed data during application startup
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    DatabaseInitializer.Seed(services);
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine("    └── 🌱 Database seeded with initial data");
-    Console.ResetColor();
-}
 
 Console.ForegroundColor = ConsoleColor.Cyan;
 Console.WriteLine(@"
